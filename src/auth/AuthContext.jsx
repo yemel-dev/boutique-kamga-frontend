@@ -1,35 +1,34 @@
 import { createContext, useContext, useState } from "react";
+import { authApi } from "../api/authApi";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(sessionStorage.getItem("jwt_token"));
-  const [role, setRole] = useState(sessionStorage.getItem("jwt_role"));
-  const [username, setUsername] = useState(sessionStorage.getItem("jwt_username"));
+  const [user, setUser] = useState(() => {
+    const token = sessionStorage.getItem("jwt_token");
+    const role = sessionStorage.getItem("user_role");
+    const username = sessionStorage.getItem("username");
+    return token ? { token, role, username } : null;
+  });
 
-  function saveSession({ token, role, username }) {
-    sessionStorage.setItem("jwt_token", token);
-    sessionStorage.setItem("jwt_role", role);
-    sessionStorage.setItem("jwt_username", username);
-    setToken(token);
-    setRole(role);
-    setUsername(username);
-  }
+  const login = async (credentials) => {
+    const { data } = await authApi.login(credentials);
+    sessionStorage.setItem("jwt_token", data.token);
+    sessionStorage.setItem("user_role", data.role);
+    sessionStorage.setItem("username", data.username);
+    setUser({ token: data.token, role: data.role, username: data.username });
+  };
 
-  function logout() {
+  const logout = () => {
     sessionStorage.clear();
-    setToken(null);
-    setRole(null);
-    setUsername(null);
-  }
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ token, role, username, saveSession, logout }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
+export const useAuth = () => useContext(AuthContext);

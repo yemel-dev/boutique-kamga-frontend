@@ -15,8 +15,8 @@ axiosClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       sessionStorage.removeItem("jwt_token");
-      sessionStorage.removeItem("jwt_role");
-      sessionStorage.removeItem("jwt_username");
+      sessionStorage.removeItem("user_role");
+      sessionStorage.removeItem("username");
       window.location.href = "/login";
     }
     return Promise.reject(error);

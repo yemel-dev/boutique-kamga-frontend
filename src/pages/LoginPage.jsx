@@ -1,45 +1,61 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { login } from "../api/authApi";
 import { useAuth } from "../auth/AuthContext";
+import toast from "react-hot-toast";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const { saveSession } = useAuth();
+  const [form, setForm] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
-      const { data } = await login(username, password);
-      saveSession(data);
+      await login(form);
       navigate("/dashboard");
     } catch (err) {
-      toast.error("Identifiants invalides");
+      toast.error(err.response?.data?.message || "Identifiants incorrects");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md w-80 space-y-4">
-        <h1 className="text-xl font-bold text-slate-800">Boutique Kamga</h1>
-        <input
-          className="w-full border rounded px-3 py-2"
-          placeholder="Nom d'utilisateur"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          className="w-full border rounded px-3 py-2"
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button className="w-full bg-slate-800 text-white rounded py-2">Se connecter</button>
-      </form>
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+        <h1 className="text-2xl font-bold text-slate-800 mb-1">Boutique Kamga</h1>
+        <p className="text-slate-500 text-sm mb-6">Entrepôt de Données — IAR418</p>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            className="w-full border rounded-lg px-4 py-2"
+            placeholder="Nom d'utilisateur"
+            value={form.username}
+            onChange={(e) => setForm({ ...form, username: e.target.value })}
+          />
+          <input
+            className="w-full border rounded-lg px-4 py-2"
+            type="password"
+            placeholder="Mot de passe"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+          />
+          <button
+            className="w-full bg-blue-700 text-white rounded-lg py-2 font-semibold disabled:opacity-60"
+            disabled={loading}
+          >
+            {loading ? "Connexion..." : "Se connecter"}
+          </button>
+        </form>
+
+        <div className="mt-4 text-xs text-slate-400 space-y-1">
+          <p>admin / password123 (ADMIN)</p>
+          <p>kamga.jean / password123 (PROPRIETAIRE)</p>
+          <p>vendeur.douala / password123 (VENDEUR)</p>
+        </div>
+      </div>
     </div>
   );
 }
