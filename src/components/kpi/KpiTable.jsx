@@ -1,10 +1,33 @@
-export default function KpiTable({ title, data, columns, limit, note }) {
+// ============================================================
+//  KpiTable.jsx — Tableau KPI avec export PDF + Excel intégré
+// ============================================================
+import ExportButtons from '../common/ExportButtons';
+
+export default function KpiTable({ title, data, columns, limit, note, filename }) {
   const rows = limit ? data.slice(0, limit) : data;
+
+  // Colonnes d'export : on retire le format visuel pour avoir les valeurs brutes
+  const exportColumns = columns.map(col => ({
+    key:   col.key,
+    label: col.label,
+  }));
+
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-      <h3 className="text-sm font-medium text-slate-700 mb-1">{title}</h3>
+      <div className="flex items-center justify-between mb-1">
+        <h3 className="text-sm font-medium text-slate-700">{title}</h3>
+        {filename && (
+          <ExportButtons
+            data={data}
+            columns={exportColumns}
+            filename={filename}
+            title={title}
+          />
+        )}
+      </div>
+
       {note && <p className="text-xs text-slate-400 mb-3">{note}</p>}
-      {/* ... reste du fichier inchangé, juste enlever le mb-4 du h3 ci-dessus */}
+
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -13,7 +36,7 @@ export default function KpiTable({ title, data, columns, limit, note }) {
                 <th
                   key={col.key}
                   className={`py-2 px-3 font-medium text-slate-500 text-xs uppercase tracking-wide ${
-                    col.align === "right" ? "text-right" : "text-left"
+                    col.align === 'right' ? 'text-right' : 'text-left'
                   }`}
                 >
                   {col.label}
@@ -28,7 +51,7 @@ export default function KpiTable({ title, data, columns, limit, note }) {
                   <td
                     key={col.key}
                     className={`py-2.5 px-3 text-slate-700 ${
-                      col.align === "right" ? "text-right tabular-nums" : "text-left"
+                      col.align === 'right' ? 'text-right tabular-nums' : 'text-left'
                     }`}
                   >
                     {col.format ? col.format(row[col.key]) : row[col.key]}

@@ -3,7 +3,11 @@ import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./auth/AuthContext";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
-import DashboardPage from "./pages/DashboardPage";
+import DashboardLayout from "./pages/dashboard/DashboardLayout";
+import DashboardOverview from "./pages/dashboard/DashboardOverview";
+import DashboardVentesProduits from "./pages/dashboard/DashboardVentesProduits";
+import DashboardClients from "./pages/dashboard/DashboardClients";
+import DashboardStocksFournisseurs from "./pages/dashboard/DashboardStocksFournisseurs";
 import VentesPage from "./pages/VentesPage";
 import StocksPage from "./pages/StocksPage";
 import AchatsPage from "./pages/AchatsPage";
@@ -22,10 +26,17 @@ export default function App() {
             path="/dashboard"
             element={
               <ProtectedRoute allow={["ADMIN", "PROPRIETAIRE"]}>
-                <DashboardPage />
+                <DashboardLayout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route index element={<Navigate to="vue-ensemble" replace />} />
+            <Route path="vue-ensemble" element={<DashboardOverview />} />
+            <Route path="ventes-produits" element={<DashboardVentesProduits />} />
+            <Route path="clients" element={<DashboardClients />} />
+            <Route path="stocks-fournisseurs" element={<DashboardStocksFournisseurs />} />
+          </Route>
+
           <Route
             path="/ventes"
             element={

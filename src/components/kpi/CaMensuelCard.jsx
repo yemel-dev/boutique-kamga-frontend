@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import KpiLineChart from "./KpiLineChart";
 
 export default function CaMensuelCard({ data }) {
@@ -6,7 +6,14 @@ export default function CaMensuelCard({ data }) {
     () => [...new Set(data.map((d) => d.annee))].sort((a, b) => b - a),
     [data]
   );
-  const [annee, setAnnee] = useState(annees[0]);
+  const [annee, setAnnee] = useState(null);
+
+  // Se déclenche dès que les données arrivent (ou changent) — pas seulement au premier rendu
+  useEffect(() => {
+    if (annees.length > 0 && !annees.includes(annee)) {
+      setAnnee(annees[0]);
+    }
+  }, [annees, annee]);
 
   const filtered = useMemo(
     () => data.filter((d) => d.annee === annee),
@@ -21,7 +28,7 @@ export default function CaMensuelCard({ data }) {
     <div className="relative">
       {annees.length > 1 && (
         <select
-          value={annee}
+          value={annee ?? ""}
           onChange={(e) => setAnnee(Number(e.target.value))}
           className="absolute top-5 right-5 z-10 text-sm border border-slate-200 rounded-lg px-2 py-1 text-slate-600 bg-white"
         >

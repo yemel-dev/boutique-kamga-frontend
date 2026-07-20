@@ -11,13 +11,15 @@ export function AuthProvider({ children }) {
     return token ? { token, role, username } : null;
   });
 
-  const login = async (credentials) => {
-    const { data } = await authApi.login(credentials);
-    sessionStorage.setItem("jwt_token", data.token);
-    sessionStorage.setItem("user_role", data.role);
-    sessionStorage.setItem("username", data.username);
-    setUser({ token: data.token, role: data.role, username: data.username });
-  };
+const login = async (credentials) => {
+  const { data } = await authApi.login(credentials);
+  sessionStorage.setItem("jwt_token", data.token);
+  sessionStorage.setItem("user_role", data.role);
+  sessionStorage.setItem("username", data.username);
+  const user = { token: data.token, role: data.role, username: data.username };
+  setUser(user);
+  return user; // <-- ajouté
+};
 
   const logout = () => {
     sessionStorage.clear();
