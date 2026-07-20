@@ -1,39 +1,21 @@
 import axiosClient from "./axiosClient";
 
+// N'inclut idBoutique dans les params QUE s'il a une valeur réelle — évite l'envoi de "?idBoutique=" (chaîne vide) quand null, qui fait planter Spring (500 au lieu d'omettre le paramètre)
+const params = (idBoutique) => (idBoutique != null ? { idBoutique } : {});
+
 export const olapApi = {
-  // KPI 1 — Produits les plus vendus
-  getTopProduits: () => axiosClient.get("/olap/produits-plus-vendus"),
+  getTopProduits: (idBoutique) => axiosClient.get("/olap/produits-plus-vendus", { params: params(idBoutique) }),
+  getCaMensuel: (idBoutique) => axiosClient.get("/olap/chiffre-affaires-mensuel", { params: params(idBoutique) }),
+  getPanierMoyen: (idBoutique) => axiosClient.get("/olap/panier-moyen-client", { params: params(idBoutique) }),
+  getMargeProduit: (idBoutique) => axiosClient.get("/olap/marge-produit", { params: params(idBoutique) }),
+  getRotationStock: (idBoutique) => axiosClient.get("/olap/taux-rotation-stock", { params: params(idBoutique) }),
+  getVentesSaison: (idBoutique) => axiosClient.get("/olap/ventes-saison", { params: params(idBoutique) }),
+  getClientsFideles: (idBoutique) => axiosClient.get("/olap/clients-fideles", { params: params(idBoutique) }),
+  getClv: (idBoutique) => axiosClient.get("/olap/valeur-vie-client", { params: params(idBoutique) }),
+  getVentesPaiement: (idBoutique) => axiosClient.get("/olap/ventes-mode-paiement", { params: params(idBoutique) }),
+  getTauxRupture: (idBoutique) => axiosClient.get("/olap/taux-rupture-stock", { params: params(idBoutique) }),
 
-  // KPI 2 — CA mensuel (inclut le trimestre dans la réponse)
-  getCaMensuel: () => axiosClient.get("/olap/chiffre-affaires-mensuel"),
-
-  // KPI 3 — Panier moyen par client
-  getPanierMoyen: () => axiosClient.get("/olap/panier-moyen-client"),
-
-  // KPI 4 — Marge bénéficiaire par produit
-  getMargeProduit: () => axiosClient.get("/olap/marge-produit"),
-
-  // KPI 5 — Performance par boutique
+  // KPI 5 et 6 — aucun filtre boutique
   getPerformance: () => axiosClient.get("/olap/performance-boutique"),
-
-  // KPI 6 — Fournisseurs les plus fiables
   getFournisseurs: () => axiosClient.get("/olap/fournisseurs-fiables"),
-
-  // KPI 7 — Taux de rotation des stocks
-  getRotationStock: () => axiosClient.get("/olap/taux-rotation-stock"),
-
-  // KPI 8 — Ventes par saison camerounaise
-  getVentesSaison: () => axiosClient.get("/olap/ventes-saison"),
-
-  // KPI 9 — Clients les plus fidèles
-  getClientsFideles: () => axiosClient.get("/olap/clients-fideles"),
-
-  // KPI 10 — Valeur vie client (CLV)
-  getClv: () => axiosClient.get("/olap/valeur-vie-client"),
-
-  // KPI 11 — Ventes par mode de paiement
-  getVentesPaiement: () => axiosClient.get("/olap/ventes-mode-paiement"),
-
-  // KPI 12 — Taux de rupture de stock
-  getTauxRupture: () => axiosClient.get("/olap/taux-rupture-stock"),
 };

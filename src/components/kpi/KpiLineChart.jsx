@@ -1,12 +1,11 @@
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
 
 const tooltipStyle = {
@@ -18,28 +17,26 @@ const tooltipStyle = {
   boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
 };
 
-export default function KpiBarChart({ title, data, xKey, bars, height = 280 }) {
+export default function KpiLineChart({ title, data, xKey, lineKey, color = "#4f46e5", height = 280 }) {
   return (
     <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
       <h3 className="text-sm font-medium text-slate-700 mb-4">{title}</h3>
 
       <ResponsiveContainer width="100%" height={height}>
-        <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
+        <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
           <XAxis dataKey={xKey} stroke="#94a3b8" tick={{ fontSize: 12 }} />
           <YAxis stroke="#94a3b8" tick={{ fontSize: 12 }} />
-          <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "#f1f5f9" }} />
-          {bars.length > 1 && <Legend wrapperStyle={{ fontSize: 12, color: "#64748b" }} />}
-          {bars.map((bar) => (
-            <Bar
-              key={bar.dataKey}
-              dataKey={bar.dataKey}
-              name={bar.name || bar.dataKey}
-              fill={bar.color}
-              radius={[4, 4, 0, 0]}
-            />
-          ))}
-        </BarChart>
+          <Tooltip contentStyle={tooltipStyle} />
+          <Line
+            type="monotone"
+            dataKey={lineKey}
+            stroke={color}
+            strokeWidth={2}
+            dot={{ r: 3, fill: color }}
+            activeDot={{ r: 5 }}
+          />
+        </LineChart>
       </ResponsiveContainer>
     </div>
   );
